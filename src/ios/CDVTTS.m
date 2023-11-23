@@ -21,7 +21,7 @@
     synthesizer = [AVSpeechSynthesizer new];
     synthesizer.delegate = self;
 }
-
+/*
 - (void)speechSynthesizer:(AVSpeechSynthesizer*)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance*)utterance {
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     if (lastCallbackId) {
@@ -37,7 +37,24 @@
       withOptions: 0 error: nil];
     [[AVAudioSession sharedInstance] setActive:YES withOptions: 0 error:nil];
 }
+*/
+- (void)speechSynthesizer:(AVSpeechSynthesizer*)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance*)utterance {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        
+        if (lastCallbackId) {
+            [self.commandDelegate sendPluginResult:result callbackId:lastCallbackId];
+            lastCallbackId = nil;
+        } else {
+            [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+            callbackId = nil;
+        }
 
+        [[AVAudioSession sharedInstance] setActive:NO withOptions:0 error:nil];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient withOptions:0 error:nil];
+        [[AVAudioSession sharedInstance] setActive:YES withOptions:0 error:nil];
+    });
+}
 - (void)speak:(CDVInvokedUrlCommand*)command {
     if (callbackId) {
         lastCallbackId = callbackId;
