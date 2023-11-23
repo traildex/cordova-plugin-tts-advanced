@@ -108,31 +108,37 @@
 }
 
 - (void)checkLanguage:(CDVInvokedUrlCommand *)command {
-    NSArray *voices = [AVSpeechSynthesisVoice speechVoices];
-    NSString *languages = @"";
-    for (id voiceName in voices) {
-        languages = [languages stringByAppendingString:@","];
-        languages = [languages stringByAppendingString:[voiceName valueForKey:@"language"]];
-    }
-    if ([languages hasPrefix:@","] && [languages length] > 1) {
-        languages = [languages substringFromIndex:1];
-    }
-
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:languages];
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSArray *voices = [AVSpeechSynthesisVoice speechVoices];
+        NSString *languages = @"";
+        for (id voiceName in voices) {
+            languages = [languages stringByAppendingString:@","];
+            languages = [languages stringByAppendingString:[voiceName valueForKey:@"language"]];
+        }
+        if ([languages hasPrefix:@","] && [languages length] > 1) {
+            languages = [languages substringFromIndex:1];
+        }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:languages];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        });
+    });
 }
 
 - (void)getVoices:(CDVInvokedUrlCommand*)command {
-    NSArray *allVoices = [AVSpeechSynthesisVoice speechVoices];
-    NSMutableArray *res = [[NSMutableArray alloc] init];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSArray *allVoices = [AVSpeechSynthesisVoice speechVoices];
+        NSMutableArray *res = [[NSMutableArray alloc] init];
 
-    for (AVSpeechSynthesisVoice *voice in allVoices) {
-        NSLog(@"TTS: Voice Name: %@, Identifier: %@, Quality: %ld", voice.name, voice.identifier, (long)voice.quality);
-        NSDictionary *lang = @{@"language": voice.language, @"name": voice.name, @"identifier": voice.identifier, @"voiceURI": voice.identifier};
-        [res addObject:lang];
-    }
-
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:res];
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        for (AVSpeechSynthesisVoice *voice in allVoices) {
+            NSLog(@"TTS: Voice Name: %@, Identifier: %@, Quality: %ld", voice.name, voice.identifier, (long)voice.quality);
+            NSDictionary *lang = @{@"language": voice.language, @"name": voice.name, @"identifier": voice.identifier, @"voiceURI": voice.identifier};
+            [res addObject:lang];
+        }
+    dispatch_async(dispatch_get_main_queue(), ^{    
+        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:res];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        });
+    });
 }
 @end
