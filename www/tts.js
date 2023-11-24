@@ -35,13 +35,13 @@ exports.checkLanguage = function () {
     cordova.exec(resolve, reject, "TTS", "checkLanguage", []);
   });
 };
-
+/*
 exports.getVoices = function () {
   return new Promise(function (resolve, reject) {
     cordova.exec(resolve, reject, "TTS", "getVoices", []);
   });
 };
-
+*/
 exports.openInstallTts = function () {
   return new Promise(function (resolve, reject) {
     cordova.exec(resolve, reject, "TTS", "openInstallTts", []);
