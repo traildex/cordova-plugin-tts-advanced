@@ -21,23 +21,7 @@
     synthesizer = [AVSpeechSynthesizer new];
     synthesizer.delegate = self;
 }
-/*
-- (void)speechSynthesizer:(AVSpeechSynthesizer*)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance*)utterance {
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    if (lastCallbackId) {
-        [self.commandDelegate sendPluginResult:result callbackId:lastCallbackId];
-        lastCallbackId = nil;
-    } else {
-        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
-        callbackId = nil;
-    }
-    
-    [[AVAudioSession sharedInstance] setActive:NO withOptions:0 error:nil];
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient
-      withOptions: 0 error: nil];
-    [[AVAudioSession sharedInstance] setActive:YES withOptions: 0 error:nil];
-}
-*/
+
 - (void)speechSynthesizer:(AVSpeechSynthesizer*)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance*)utterance {
     dispatch_async(dispatch_get_main_queue(), ^{
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -123,40 +107,4 @@
     [synthesizer pauseSpeakingAtBoundary:AVSpeechBoundaryImmediate];
     [synthesizer stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
 }
-/*
-- (void)checkLanguage:(CDVInvokedUrlCommand *)command {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *voices = [AVSpeechSynthesisVoice speechVoices];
-        NSString *languages = @"";
-        for (id voiceName in voices) {
-            languages = [languages stringByAppendingString:@","];
-            languages = [languages stringByAppendingString:[voiceName valueForKey:@"language"]];
-        }
-        if ([languages hasPrefix:@","] && [languages length] > 1) {
-            languages = [languages substringFromIndex:1];
-        }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:languages];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        });
-    });
-}
-
-- (void)getVoices:(CDVInvokedUrlCommand*)command {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *allVoices = [AVSpeechSynthesisVoice speechVoices];
-        NSMutableArray *res = [[NSMutableArray alloc] init];
-
-        for (AVSpeechSynthesisVoice *voice in allVoices) {
-            NSLog(@"TTS: Voice Name: %@, Identifier: %@, Quality: %ld", voice.name, voice.identifier, (long)voice.quality);
-            NSDictionary *lang = @{@"language": voice.language, @"name": voice.name, @"identifier": voice.identifier, @"voiceURI": voice.identifier};
-            [res addObject:lang];
-        }
-    dispatch_async(dispatch_get_main_queue(), ^{    
-        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:res];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-        });
-    });
-}
-*/
 @end
