@@ -123,7 +123,7 @@
     [synthesizer pauseSpeakingAtBoundary:AVSpeechBoundaryImmediate];
     [synthesizer stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
 }
-
+/*
 - (void)checkLanguage:(CDVInvokedUrlCommand *)command {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSArray *voices = [AVSpeechSynthesisVoice speechVoices];
@@ -141,7 +141,7 @@
         });
     });
 }
-/*
+
 - (void)getVoices:(CDVInvokedUrlCommand*)command {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSArray *allVoices = [AVSpeechSynthesisVoice speechVoices];
