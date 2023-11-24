@@ -17,9 +17,13 @@
 
 @implementation CDVTTS
 
-- (void)pluginInitialize {
-    synthesizer = [AVSpeechSynthesizer new];
-    synthesizer.delegate = self;
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        synthesizer = [AVSpeechSynthesizer new];
+        synthesizer.delegate = self;
+    }
+    return self;
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer*)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance*)utterance {
